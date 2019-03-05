@@ -154,13 +154,13 @@ const checkController = (req, res, next) => {
 //  GET /quizzes/1/edit
 const editController = (req, res, next) => {
 
-     // .... introducir código
+    console.log("editController");
 };
 
 //  PUT /quizzes/1
 const updateController = (req, res, next) => {
 
-     // .... introducir código
+    console.log("updateController");
 };
 
 // GET /quizzes/new
@@ -182,7 +182,7 @@ const createController = (req, res, next) => {
 // DELETE /quizzes/1
 const destroyController = (req, res, next) => {
 
-     // .... introducir código
+     console.log("destroyController");
  };
 
 
@@ -194,6 +194,9 @@ app.get('/quizzes/:id/play',  playController);
 app.get('/quizzes/:id/check', checkController);
 app.get('/quizzes/new',       newController);
 app.post('/quizzes',          createController);
+app.get('/quizzes/:id/edit', editController);
+app.put('/quizzes/:id', updateController);
+app.delete('/quizzes/:id', destroyController);
 
     // ..... instalar los MWs asociados a
     //   GET  /quizzes/:id/edit,   PUT  /quizzes/:id y  DELETE  /quizzes/:id
