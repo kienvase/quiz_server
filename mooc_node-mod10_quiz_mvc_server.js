@@ -74,28 +74,37 @@ const index = (quizzes) => `<!-- HTML view -->
 
 const play = (id, question, response) => `<!-- HTML view -->
 <html>
-    <head><title>MVC Example</title><meta charset="utf-8"></head> 
+    <head>
+        <title>MVC Example</title><meta charset="utf-8">
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(function(){
+                $('#check').on('click', function(){
+                    $.ajax( {
+                        type: 'get',
+                        url: '/quizzes/${id}/check',
+                        data: {
+                            'response' : $('#answer')[0].value,
+                            'msg' : ""
+                        },
+                        success: function (response){
+                            $('#msg').html('<h4>' + response + '</h4>');
+                        }
+                    } )
+                });
+            });
+        </script>
+    </head> 
     <body>
         <h1>MVC: Quizzes</h1>
         <form   method="get"   action="/quizzes/${id}/check">
             ${question}: <p>
-            <input type="text" name="response" value="${response}" placeholder="Answer" />
-            <input type="submit" value="Check"/> <br>
+            <input type="text" id="answer" value="${response}" placeholder="Answer" />
+            <input type="button" id="check" value="Check"/> <br>
         </form>
         </p>
+        <div id="msg"></div>
         <a href="/quizzes"><button>Go back</button></a>
-    </body>
-</html>`;
-
-const check = (id, msg, response) => `<!-- HTML view -->
-<html>
-    <head><title>MVC Example</title><meta charset="utf-8"></head> 
-    <body>
-        <h1>MVC: Quizzes</h1>
-        <strong><div id="msg">${msg}</div></strong>
-        <p>
-        <a href="/quizzes"><button>Go back</button></a>
-        <a href="/quizzes/${id}/play?response=${response}"><button>Try again</button></a>
     </body>
 </html>`;
 
@@ -131,7 +140,7 @@ const playController = (req, res, next) => {
     let id = Number(req.params.id);
     let response = req.query.response || "";
 
-    quizzes.findById(id)
+    quizzes.findByPk(id)
     .then((quiz) => res.send(play(id, quiz.question, response)))
     .catch((error) => `A DB Error has occurred:\n${error}`);
  };
@@ -141,12 +150,12 @@ const checkController = (req, res, next) => {
     let response = req.query.response, msg;
     let id = Number(req.params.id);
 
-    quizzes.findById(id)
+    quizzes.findByPk(id)
     .then((quiz) => {
         msg = (quiz.answer===response) ?
               `Yes, "${response}" is the ${quiz.question}` 
             : `No, "${response}" is not the ${quiz.question}`;
-        return res.send(check(id, msg, response));
+        return res.send(msg);
     })
     .catch((error) => `A DB Error has occurred:\n${error}`);
 };
