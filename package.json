@@ -4,7 +4,7 @@
   "description": "mooc_node-mod10_quiz_mvc_server",
   "main": "main.js",
   "scripts": {
-    "start": "node main.js",
+    "start": "nodemon mooc_node-mod10_quiz_mvc_server.js",
     "checks": "node tests/launcher.js",
     "zip": "node tests/compress.js mooc_node-mod10_quiz_mvc_server"
   },
@@ -26,5 +26,8 @@
     "express": "^4.0.0",
     "zombie": "^6.1.2",
     "method-override": "^3.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
   }
 }
