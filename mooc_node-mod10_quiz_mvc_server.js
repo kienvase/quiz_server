@@ -162,14 +162,26 @@ const checkController = (req, res, next) => {
 
 //  GET /quizzes/1/edit
 const editController = (req, res, next) => {
-
-    console.log("editController");
+    let id = Number(req.params.id);
+    quizzes.findByPk(id)
+    .then((quiz) => {
+        return res.send(quizForm("Edit new Quiz", "post", `/quizzes/${id}`, quiz.question, quiz.answer));
+    })
+    .catch((error) => `A DB Error has occurred:\n${error}`);
 };
 
 //  PUT /quizzes/1
 const updateController = (req, res, next) => {
+    let {question, answer} = req.body;
+    let id = req.params.id;
 
-    console.log("updateController");
+    quizzes.findByPk(id)
+    .then((quiz) => {
+        quiz.update({question, answer})
+            .then((quiz) => res.redirect('/quizzes'))
+            .catch((error) => `Quiz not updated:\n${error}`);
+    })
+    .catch((error) => `Quiz not find:\n${error}`);
 };
 
 // GET /quizzes/new
@@ -204,7 +216,7 @@ app.get('/quizzes/:id/check', checkController);
 app.get('/quizzes/new',       newController);
 app.post('/quizzes',          createController);
 app.get('/quizzes/:id/edit', editController);
-app.put('/quizzes/:id', updateController);
+app.post('/quizzes/:id', updateController); //cambiar a PUT con ajax
 app.delete('/quizzes/:id', destroyController);
 
     // ..... instalar los MWs asociados a
