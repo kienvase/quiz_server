@@ -110,16 +110,41 @@ const play = (id, question, response) => `<!-- HTML view -->
 
 const quizForm =(msg, method, action, question, answer) => `<!-- HTML view -->
 <html>
-    <head><title>MVC Example</title><meta charset="utf-8"></head> 
+    <head>
+        <title>MVC Example</title><meta charset="utf-8">
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(function(){
+                $('#create').on('click', function(e){
+                    e.preventDefault();
+                    $.ajax( {
+                        type: '${method}',
+                        url: '${action}',
+                        data: {
+                            'question' : $('#question')[0].value,
+                            'answer' : $('#answer')[0].value
+                        },
+                        success: function(response){
+                            $('#msg').html(response +' Volviendo al inicio...');
+                            setTimeout(function(){
+                                location.href="http://localhost:8000/quizzes"
+                            }, 2000);
+                        }
+                    } )
+                });
+            });
+        </script>
+    </head> 
     <body>
         <h1>MVC: Quizzes</h1>
-        <form   method="${method}"   action="${action}">
+        <form>
             ${msg}: <p>
-            <input  type="text"  name="question" value="${question}" placeholder="Question" />
-            <input  type="text"  name="answer"   value="${answer}"   placeholder="Answer" />
-            <input  type="submit" value="Create"/> <br>
+            <input  type="text"  name="question" id="question" value="${question}" placeholder="Question" />
+            <input  type="text"  name="answer" id="answer" value="${answer}"   placeholder="Answer" />
+            <input  type="submit" id="create" value="Create"/> <br>
         </form>
         </p>
+        <div id="msg"></div>
         <a href="/quizzes"><button>Go back</button></a>
     </body>
 </html>`;
@@ -154,7 +179,7 @@ const checkController = (req, res, next) => {
     .then((quiz) => {
         msg = (quiz.answer===response) ?
               `Yes, "${response}" is the ${quiz.question}` 
-            : `No, "${response}" is not the ${quiz.question}`;
+            : `No, "${response}" is not the ${quiz.question}. Try Again!!`;
         return res.send(msg);
     })
     .catch((error) => `A DB Error has occurred:\n${error}`);
@@ -165,7 +190,7 @@ const editController = (req, res, next) => {
     let id = Number(req.params.id);
     quizzes.findByPk(id)
     .then((quiz) => {
-        return res.send(quizForm("Edit new Quiz", "post", `/quizzes/${id}`, quiz.question, quiz.answer));
+        return res.send(quizForm("Edit new Quiz", "put", `/quizzes/${id}`, quiz.question, quiz.answer));
     })
     .catch((error) => `A DB Error has occurred:\n${error}`);
 };
@@ -174,11 +199,15 @@ const editController = (req, res, next) => {
 const updateController = (req, res, next) => {
     let {question, answer} = req.body;
     let id = req.params.id;
+    let msg = "";
 
     quizzes.findByPk(id)
     .then((quiz) => {
         quiz.update({question, answer})
-            .then((quiz) => res.redirect('/quizzes'))
+            .then((quiz) => {
+                msg = 'Edited.';
+                res.send(msg);
+            })
             .catch((error) => `Quiz not updated:\n${error}`);
     })
     .catch((error) => `Quiz not find:\n${error}`);
@@ -193,11 +222,17 @@ const newController = (req, res, next) => {
 // POST /quizzes
 const createController = (req, res, next) => {
     let {question, answer} = req.body;
+    let msg = "";
 
     quizzes.build({question, answer})
     .save()
-    .then((quiz) => res.redirect('/quizzes'))
-    .catch((error) => `Quiz not created:\n${error}`);
+    .then((quiz) => {
+        msg = 'Created.';
+        res.send(msg);
+    })
+    .catch((error) => {
+        `Quiz not created:\n${error}`;
+    })
  };
 
 // DELETE /quizzes/1
@@ -216,7 +251,7 @@ app.get('/quizzes/:id/check', checkController);
 app.get('/quizzes/new',       newController);
 app.post('/quizzes',          createController);
 app.get('/quizzes/:id/edit', editController);
-app.post('/quizzes/:id', updateController); //cambiar a PUT con ajax
+app.put('/quizzes/:id', updateController);
 app.delete('/quizzes/:id', destroyController);
 
     // ..... instalar los MWs asociados a
