@@ -51,7 +51,25 @@ sequelize.sync() // Syncronize DB and seed if needed
 
 const index = (quizzes) => `<!-- HTML view -->
 <html>
-    <head><title>MVC Example</title><meta charset="utf-8"></head> 
+    <head>
+        <title>MVC Example</title><meta charset="utf-8">
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            function deleteQuizz(id, question){
+                var conf = confirm('Delete: ' + question);
+                if (conf){
+                    $.ajax( {
+                        type: 'delete',
+                        url: '/quizzes/' + id,
+                        success: function (response){
+                            location.href=("/quizzes");
+                        }
+                    } )
+                }
+            }
+        </script>
+    </head>
+
     <body> 
         <h1>MVC: Quizzes</h1>
         <table>`
@@ -60,9 +78,7 @@ const index = (quizzes) => `<!-- HTML view -->
 `       <tr>
             <td><a href="/quizzes/${quiz.id}/play">${quiz.question}</a></td>
             <td><a href="/quizzes/${quiz.id}/edit"><button>Edit</button></a></td>
-            <td><a href="/quizzes/${quiz.id}?_method=DELETE"
-            onClick="return confirm('Delete: ${quiz.question}')">
-            <button>Delete</button></a></td>
+            <td><button onClick="deleteQuizz('${quiz.id}','${quiz.question}')">Delete</button></td>
         </tr>\n`, 
     ""
 )
@@ -237,8 +253,20 @@ const createController = (req, res, next) => {
 
 // DELETE /quizzes/1
 const destroyController = (req, res, next) => {
+    let id = req.params.id;
+    let msg = "";
 
-     console.log("destroyController");
+    quizzes.findByPk(id)
+    .then((quiz) => {
+        quiz.destroy()
+            .then((quiz) => {
+                msg = 'Destroyed.';
+                res.send(msg);
+            })
+            .catch((error) => `Quiz not destroyed:\n${error}`);
+    })
+    .catch((error) => `Quiz not find:\n${error}`);
+
  };
 
 
