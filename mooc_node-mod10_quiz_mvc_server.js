@@ -53,6 +53,7 @@ const index = (quizzes) => `<!-- HTML view -->
 <html>
     <head>
         <title>MVC Example</title><meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script type="text/javascript">
             function deleteQuizz(id, question){
@@ -71,20 +72,35 @@ const index = (quizzes) => `<!-- HTML view -->
     </head>
 
     <body> 
-        <h1>MVC: Quizzes</h1>
-        <table>`
-+ quizzes.reduce(
-    (ac, quiz) => ac += 
-`       <tr>
-            <td><a href="/quizzes/${quiz.id}/play">${quiz.question}</a></td>
-            <td><a href="/quizzes/${quiz.id}/edit"><button>Edit</button></a></td>
-            <td><button onClick="deleteQuizz('${quiz.id}','${quiz.question}')">Delete</button></td>
-        </tr>\n`, 
-    ""
-)
-+ `     <p/>
-        </table>
-        <a href="/quizzes/new"><button>New Quiz</button></a>
+    <div class="container">
+        <div class="row">
+            <div class="col-4 mx-auto">
+                <div class="card border-primary">
+                    <div class="card-header">
+                        <h1>MVC: Quizzes</h1>
+                    </div>
+                    <div class="card-body mx-auto">
+                        <table>`
+                        + quizzes.reduce(
+                            (ac, quiz) => ac += 
+                    `       <tr>
+                                <td><a href="/quizzes/${quiz.id}/play">${quiz.question}</a></td>
+                                <td><a href="/quizzes/${quiz.id}/edit"><button class="btn btn-sm btn-outline-primary">Edit</button></a></td>
+                                <td><button  class="btn btn-sm btn-outline-danger" onClick="deleteQuizz('${quiz.id}','${quiz.question}')">Delete</button></td>
+                            </tr>\n`, 
+                        ""
+                    )
+                + `     <p/>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+                        <a href="/quizzes/new"><button class="btn btn-outline-success">New Quiz</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        
     </body>
 </html>`;
 
@@ -92,6 +108,7 @@ const play = (id, question, response) => `<!-- HTML view -->
 <html>
     <head>
         <title>MVC Example</title><meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script type="text/javascript">
             $(function(){
@@ -112,15 +129,30 @@ const play = (id, question, response) => `<!-- HTML view -->
         </script>
     </head> 
     <body>
-        <h1>MVC: Quizzes</h1>
-        <form   method="get"   action="/quizzes/${id}/check">
-            ${question}: <p>
-            <input type="text" id="answer" value="${response}" placeholder="Answer" />
-            <input type="button" id="check" value="Check"/> <br>
-        </form>
-        </p>
-        <div id="msg"></div>
-        <a href="/quizzes"><button>Go back</button></a>
+    <div class="container">
+        <div class="row">
+            <div class="col-4 mx-auto">
+                <div class="card border-primary">
+                    <div class="card-header">
+                        <h1>MVC: Quizzes</h1>
+                    </div>
+                    <div class="card-body">
+                        <form method="get"   action="/quizzes/${id}/check">
+                            <div class="form-group">
+                                <label for="answer">${question}</label>
+                                <input class="form-control" type="text" id="answer" value="${response}" placeholder="Answer" />
+                            </div>
+                            <input class="btn btn-outline-success" type="button" id="check" value="Check"/>
+                        </form>
+                    </div>
+                    <div class="card-footer">
+                        <div id="msg"></div>
+                        <a href="/quizzes"><button class="btn btn-outline-default">Go back</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     </body>
 </html>`;
 
@@ -128,6 +160,7 @@ const quizForm =(msg, method, action, question, answer) => `<!-- HTML view -->
 <html>
     <head>
         <title>MVC Example</title><meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script type="text/javascript">
             $(function(){
@@ -152,16 +185,33 @@ const quizForm =(msg, method, action, question, answer) => `<!-- HTML view -->
         </script>
     </head> 
     <body>
-        <h1>MVC: Quizzes</h1>
-        <form>
-            ${msg}: <p>
-            <input  type="text"  name="question" id="question" value="${question}" placeholder="Question" />
-            <input  type="text"  name="answer" id="answer" value="${answer}"   placeholder="Answer" />
-            <input  type="submit" id="create" value="Create"/> <br>
-        </form>
-        </p>
-        <div id="msg"></div>
-        <a href="/quizzes"><button>Go back</button></a>
+    <div class="container green">
+        <div class="row">
+            <div class="col-4 mx-auto">
+                <div class="card border-primary">
+                    <div class="card-header">
+                        <h1>MVC:Quizzes</h1>
+                    </div>
+                    <div class="card-body">
+                        <h4>${msg}: </h4>
+                        <form>
+                            <div class="form-group">
+                                <input  class="form-control" type="text"  name="question" id="question" value="${question}" placeholder="Question" />
+                            </div>
+                            <div class="form-group">
+                                <input  class="form-control"  type="text"  name="answer" id="answer" value="${answer}"   placeholder="Answer" />
+                            </div>
+                                <input  class="btn btn-outline-success"  type="submit" id="create" value="Create"/> <br>
+                        </form>
+                    </div>
+                    <div class="card-footer">
+                        <div id="msg"></div>
+                        <a href="/quizzes"><button  class="btn btn-outine-default">Go back</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     </body>
 </html>`;
 
